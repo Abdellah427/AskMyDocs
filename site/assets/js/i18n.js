@@ -4,7 +4,7 @@
 
 const I18N = {
   fr: {
-    "meta.title": "AskMyDocs — Assistant documentaire RAG",
+    "meta.title": "AskMyDocs · Assistant documentaire RAG",
     "meta.desc":
       "Assistant documentaire RAG : posez vos questions en langage naturel, obtenez des réponses fondées sur vos propres fichiers CSV et PDF.",
 
@@ -16,7 +16,7 @@ const I18N = {
     "hero.eyebrow": "Assistant documentaire RAG",
     "hero.h1": "Posez la question.<br><em>Vos documents répondent.</em>",
     "hero.lede":
-      "AskMyDocs indexe vos fichiers CSV et PDF en local, retrouve les passages les plus pertinents pour votre question, puis s'appuie sur eux pour rédiger une réponse — avec les sources à l'appui.",
+      "AskMyDocs indexe vos fichiers CSV et PDF en local, retrouve les passages les plus pertinents pour votre question, puis rédige une réponse fondée sur eux, sources à l'appui.",
     "hero.cta1": "Voir le code",
     "hero.cta2": "Comment ça marche",
     "hero.note": "Ce site n'utilise ni cookie, ni traceur, ni requête externe.",
@@ -27,7 +27,7 @@ const I18N = {
     "demo.file": "Movie_Collection.csv · ligne 218",
     "demo.score": "pertinence 0.94",
     "demo.srcText":
-      "Titre : Titanic — Résumé : à bord du paquebot, <mark class=\"hl\">Jack, un artiste sans le sou, et Rose, une jeune aristocrate</mark>, vivent une histoire d'amour interrompue par le naufrage.",
+      "Titre : Titanic. Résumé : à bord du paquebot, <mark class=\"hl\">Jack, un artiste sans le sou, et Rose, une jeune aristocrate</mark>, vivent une histoire d'amour interrompue par le naufrage.",
     "demo.ansLabel": "Réponse",
     "demo.answer":
       "Titanic raconte la romance entre <strong>Jack et Rose</strong> à bord du paquebot, jusqu'au naufrage. <span class=\"cite\">source : ligne 218</span>",
@@ -94,6 +94,7 @@ const I18N = {
       "Parcourez le code, lancez l'assistant en local, ou lisez le rapport qui détaille la démarche.",
     "cta.b1": "Voir sur GitHub",
     "cta.b2": "Lire le rapport (PDF)",
+    "cta.download": "Télécharger le code (ZIP)",
     "cta.eyebrow": "Le code",
     "ov.metaRun": "CSV · PDF · réponses sourcées",
     "how.p2": "Un pipeline simple, du fichier brut jusqu'à la réponse fondée sur vos passages.",
@@ -138,12 +139,12 @@ const I18N = {
     "lg.5p":
       "Le projet est fourni « en l'état », sans garantie d'aucune sorte, expresse ou implicite. L'éditeur ne saurait être tenu responsable d'un éventuel dommage lié à son utilisation.",
     "lg.updated": "Dernière mise à jour : juillet 2026",
-    "lg.metaTitle": "Mentions légales — AskMyDocs",
+    "lg.metaTitle": "Mentions légales · AskMyDocs",
     "lg.metaDesc": "Mentions légales du site AskMyDocs.",
   },
 
   en: {
-    "meta.title": "AskMyDocs — RAG document assistant",
+    "meta.title": "AskMyDocs · RAG document assistant",
     "meta.desc":
       "RAG document assistant: ask questions in plain language and get answers grounded in your own CSV and PDF files.",
 
@@ -155,7 +156,7 @@ const I18N = {
     "hero.eyebrow": "RAG document assistant",
     "hero.h1": "Ask the question.<br><em>Your documents answer.</em>",
     "hero.lede":
-      "AskMyDocs indexes your CSV and PDF files locally, retrieves the passages most relevant to your question, then grounds its answer in them — sources included.",
+      "AskMyDocs indexes your CSV and PDF files locally, retrieves the passages most relevant to your question, then writes an answer grounded in them, sources included.",
     "hero.cta1": "View the code",
     "hero.cta2": "How it works",
     "hero.note": "This site uses no cookies, no trackers and no external requests.",
@@ -166,7 +167,7 @@ const I18N = {
     "demo.file": "Movie_Collection.csv · row 218",
     "demo.score": "relevance 0.94",
     "demo.srcText":
-      "Title: Titanic — Summary: aboard the liner, <mark class=\"hl\">Jack, a penniless artist, and Rose, a young aristocrat</mark>, live a love story cut short by the sinking.",
+      "Title: Titanic. Summary: aboard the liner, <mark class=\"hl\">Jack, a penniless artist, and Rose, a young aristocrat</mark>, live a love story cut short by the sinking.",
     "demo.ansLabel": "Answer",
     "demo.answer":
       "Titanic tells the romance between <strong>Jack and Rose</strong> aboard the liner, up to the sinking. <span class=\"cite\">source: row 218</span>",
@@ -232,6 +233,7 @@ const I18N = {
       "Browse the code, run the assistant locally, or read the report that details the approach.",
     "cta.b1": "View on GitHub",
     "cta.b2": "Read the report (PDF)",
+    "cta.download": "Download the code (ZIP)",
     "cta.eyebrow": "The code",
     "ov.metaRun": "CSV · PDF · grounded answers",
     "how.p2": "A simple pipeline, from the raw file to an answer grounded in your passages.",
@@ -276,7 +278,7 @@ const I18N = {
     "lg.5p":
       "The project is provided “as is”, without warranty of any kind, express or implied. The publisher cannot be held liable for any damage arising from its use.",
     "lg.updated": "Last updated: July 2026",
-    "lg.metaTitle": "Legal notice — AskMyDocs",
+    "lg.metaTitle": "Legal notice · AskMyDocs",
     "lg.metaDesc": "Legal notice for the AskMyDocs site.",
   },
 };
