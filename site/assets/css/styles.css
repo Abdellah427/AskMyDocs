@@ -1,0 +1,829 @@
+@import url("fonts.css");
+
+/* ============================================================
+   AskMyDocs - showcase site
+   Direction: "Editorial dossier" - a typeset technical document.
+   Rules, margin numbers, a datasheet methods table, annotated
+   citations. No shadow cards, no browser mockups, no gradients.
+   ============================================================ */
+
+:root {
+  --paper: #f4f6f7;
+  --paper-2: #eef1f2;
+  --ink: #14181a;
+  --ink-soft: #46504f;
+  --ink-mute: #74807f;
+  --line: #cfd8da;
+  --line-soft: #e0e6e7;
+
+  --accent: #0e5a6b;
+  --accent-strong: #0a424e;
+  --marker: #ffd65a;
+  --marker-soft: #ffe9a8;
+  --good: #1f7a4d;
+
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-body: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --maxw: 1120px;
+  --gutter: clamp(1.15rem, 4vw, 2.5rem);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.62;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+a:hover {
+  color: var(--accent-strong);
+}
+
+p {
+  margin: 0;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  line-height: 1.06;
+  letter-spacing: -0.012em;
+  margin: 0;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.wrap {
+  width: 100%;
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* Mono utility labels */
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* Signature: highlighter marker */
+mark.hl {
+  background: linear-gradient(
+    100deg,
+    rgba(255, 214, 90, 0) 0.3%,
+    var(--marker-soft) 1.2%,
+    var(--marker) 5%,
+    var(--marker) 95%,
+    var(--marker-soft) 98.8%,
+    rgba(255, 214, 90, 0) 99.7%
+  );
+  color: inherit;
+  padding: 0.02em 0.1em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+/* ---------- Buttons: flat, sharp, editorial ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.7rem 1.15rem;
+  border: 1.5px solid var(--ink);
+  border-radius: 2px;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.btn svg {
+  width: 1.05em;
+  height: 1.05em;
+}
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.btn-primary:hover {
+  background: var(--accent-strong);
+  border-color: var(--accent-strong);
+  color: #fff;
+}
+.btn-ghost:hover {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+/* Arrowed inline link */
+.arrow {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+  border-bottom: 1.5px solid var(--accent);
+  padding-bottom: 2px;
+}
+.arrow::before {
+  content: "-> ";
+}
+.arrow:hover {
+  color: var(--accent-strong);
+  border-color: var(--accent-strong);
+}
+
+/* ---------- Masthead ---------- */
+.masthead {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--paper);
+  border-bottom: 1px solid var(--ink);
+}
+.masthead-row {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  min-height: 60px;
+}
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.15rem;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.brand:hover {
+  color: var(--ink);
+}
+.brand .logo {
+  width: 26px;
+  height: 26px;
+  flex: none;
+}
+.brand b {
+  color: var(--accent);
+  font-weight: 600;
+}
+.masthead-meta {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+.masthead-nav {
+  display: flex;
+  gap: 1.15rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.masthead-nav a {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.masthead-nav a:hover {
+  color: var(--accent);
+}
+.masthead-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.lang-switch {
+  display: inline-flex;
+  border: 1px solid var(--ink);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.lang-switch button {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  border: none;
+  background: transparent;
+  color: var(--ink-mute);
+  padding: 0.3rem 0.55rem;
+  cursor: pointer;
+}
+.lang-switch button + button {
+  border-left: 1px solid var(--line);
+}
+.lang-switch button[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+/* ---------- Section scaffolding ---------- */
+.runhead {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  padding-top: 1rem;
+  padding-bottom: 1.1rem;
+  border-top: 2px solid var(--ink);
+}
+.runhead .num {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.08em;
+}
+.runhead .name {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.runhead .meta {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  color: var(--ink-mute);
+  text-align: right;
+}
+
+.section {
+  padding-bottom: clamp(3rem, 6vw, 5rem);
+}
+.section-lead {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: clamp(1.5rem, 4vw, 3rem);
+  align-items: end;
+  padding-top: clamp(1.5rem, 3vw, 2.5rem);
+}
+.section-lead h2 {
+  font-size: clamp(1.9rem, 3.8vw, 3rem);
+}
+.section-lead p {
+  color: var(--ink-soft);
+  font-size: 1.02rem;
+}
+
+/* ---------- Hero ---------- */
+.hero {
+  padding-top: clamp(2.5rem, 6vw, 4.5rem);
+  padding-bottom: clamp(2.5rem, 5vw, 4rem);
+}
+.hero-kicker {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: clamp(1.75rem, 4vw, 2.75rem);
+}
+.hero-kicker .r {
+  margin-left: auto;
+  color: var(--ink-mute);
+}
+.hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: clamp(2rem, 5vw, 4.5rem);
+  align-items: start;
+}
+.hero h1 {
+  font-size: clamp(2.7rem, 6vw, 5.2rem);
+  letter-spacing: -0.028em;
+}
+.hero h1 em {
+  font-style: italic;
+  color: var(--accent);
+}
+.hero-lede {
+  margin-top: 1.5rem;
+  max-width: 30rem;
+  font-size: 1.14rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+.hero-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+.hero-note {
+  margin-top: 1.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  color: var(--ink-mute);
+}
+
+/* Annotated citation (the signature, print style) */
+.figure {
+  border-top: 2px solid var(--accent);
+  padding-top: 0.85rem;
+}
+.figure .cap {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+.excerpt-block {
+  border-left: 2px solid var(--accent);
+  padding-left: 1.15rem;
+  margin-top: 1.1rem;
+}
+.excerpt-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.9rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--ink-mute);
+  margin-bottom: 0.7rem;
+}
+.excerpt-meta .score {
+  color: var(--good);
+}
+.excerpt-text {
+  font-family: var(--font-display);
+  font-size: 1.12rem;
+  line-height: 1.5;
+  color: var(--ink);
+}
+.excerpt-answer {
+  margin-top: 1.1rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: var(--accent-strong);
+}
+.excerpt-answer::before {
+  content: "-> ";
+  color: var(--ink-mute);
+}
+.excerpt-answer .cite {
+  color: var(--ink-mute);
+}
+
+/* ---------- 01 Overview: three ruled columns ---------- */
+.columns {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+.columns > div {
+  padding: 0.5rem 1.5rem 0 0;
+}
+.columns > div + div {
+  padding-left: 1.5rem;
+  border-left: 1px solid var(--line);
+}
+.col-k {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+}
+.columns h3 {
+  font-size: 1.4rem;
+  margin-top: 0.8rem;
+}
+.columns p {
+  margin-top: 0.6rem;
+  color: var(--ink-soft);
+  font-size: 0.97rem;
+}
+
+/* ---------- 02 Pipeline: big numerals, ruled ---------- */
+.pipeline {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+.pipeline > div {
+  padding: 0 1.25rem 0 0;
+}
+.pipeline > div + div {
+  padding-left: 1.25rem;
+  border-left: 1px solid var(--line);
+}
+.pipeline .n {
+  font-family: var(--font-display);
+  font-size: 2.6rem;
+  line-height: 1;
+  color: var(--accent);
+}
+.pipeline h3 {
+  font-size: 1.18rem;
+  margin-top: 0.7rem;
+}
+.pipeline p {
+  margin-top: 0.5rem;
+  color: var(--ink-soft);
+  font-size: 0.92rem;
+}
+
+/* ---------- 03 Methods: datasheet table ---------- */
+.spec {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.5rem;
+}
+.spec th,
+.spec td {
+  text-align: left;
+  vertical-align: top;
+  padding: 1.1rem 1.25rem 1.1rem 0;
+  border-bottom: 1px solid var(--line);
+}
+.spec thead th {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  font-weight: 500;
+  border-bottom: 1px solid var(--ink);
+  padding-bottom: 0.7rem;
+}
+.spec .m-name {
+  font-family: var(--font-display);
+  font-size: 1.28rem;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.spec .m-tag {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-top: 0.35rem;
+}
+.spec .m-desc {
+  color: var(--ink-soft);
+  font-size: 0.97rem;
+  padding-right: 1.5rem;
+}
+.spec .m-best {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+/* ---------- 04 Under the hood ---------- */
+.uth {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  align-items: start;
+}
+.stack-line {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  line-height: 2.1;
+  color: var(--ink-soft);
+}
+.stack-line b {
+  color: var(--ink);
+  font-weight: 500;
+}
+.notes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.notes li {
+  padding: 1rem 0;
+  border-top: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+  gap: 1.25rem;
+}
+.notes li:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+.notes h3 {
+  font-size: 1.05rem;
+}
+.notes p {
+  color: var(--ink-soft);
+  font-size: 0.94rem;
+}
+
+/* ---------- 05 Closing ---------- */
+.closing {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  align-items: center;
+  padding-top: clamp(1.5rem, 3vw, 2.5rem);
+}
+.closing h2 {
+  font-size: clamp(2rem, 4vw, 3.2rem);
+}
+.closing p {
+  margin-top: 1rem;
+  color: var(--ink-soft);
+  max-width: 32rem;
+}
+.closing-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+/* ---------- Footer / colophon ---------- */
+.colophon {
+  border-top: 2px solid var(--ink);
+  padding-block: 2rem 2.5rem;
+  margin-top: 1rem;
+}
+.colophon-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem 3rem;
+  justify-content: space-between;
+}
+.colophon-brand {
+  max-width: 24rem;
+}
+.colophon-brand p {
+  margin-top: 0.7rem;
+  font-size: 0.88rem;
+  color: var(--ink-mute);
+}
+.colophon-links {
+  display: flex;
+  gap: 3rem;
+  flex-wrap: wrap;
+}
+.colophon-col h4 {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  margin: 0 0 0.85rem;
+  font-weight: 500;
+}
+.colophon-col ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+.colophon-col a {
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+}
+.colophon-col a:hover {
+  color: var(--accent);
+}
+.colophon-bottom {
+  margin-top: 2rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.5rem;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.03em;
+  color: var(--ink-mute);
+}
+
+/* ---------- Legal page ---------- */
+.legal {
+  padding-block: clamp(2rem, 5vw, 3.5rem) clamp(2.5rem, 6vw, 4.5rem);
+}
+.legal-head {
+  border-bottom: 2px solid var(--ink);
+  padding-bottom: 1.5rem;
+}
+.legal-head h1 {
+  font-size: clamp(2.2rem, 5vw, 3.4rem);
+  margin-top: 0.9rem;
+}
+.legal-head p {
+  margin-top: 0.85rem;
+  color: var(--ink-soft);
+  max-width: 42rem;
+}
+.legal-block {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2.4fr);
+  gap: 1.25rem clamp(1.5rem, 4vw, 3rem);
+  padding: 1.6rem 0;
+  border-bottom: 1px solid var(--line);
+}
+.legal-block h2 {
+  font-size: 1.35rem;
+  display: flex;
+  gap: 0.7rem;
+  align-items: baseline;
+}
+.legal-block h2 .n {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--accent);
+  font-weight: 700;
+}
+.legal-block p {
+  color: var(--ink-soft);
+  font-size: 0.98rem;
+}
+.legal-block a {
+  word-break: break-word;
+}
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+/* ---------- Reveal (subtle, opacity only) ---------- */
+.js .reveal {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.js .reveal.in {
+  opacity: 1;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 880px) {
+  .hero-grid,
+  .section-lead,
+  .uth,
+  .closing {
+    grid-template-columns: 1fr;
+  }
+  .columns {
+    grid-template-columns: 1fr;
+  }
+  .columns > div {
+    padding: 1.15rem 0;
+    border-top: 1px solid var(--line);
+  }
+  .columns > div + div {
+    padding-left: 0;
+    border-left: none;
+  }
+  .columns > div:first-child {
+    padding-top: 0.5rem;
+  }
+  .pipeline {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem 0;
+  }
+  .pipeline > div {
+    padding: 0 1rem;
+  }
+  .pipeline > div:nth-child(odd) {
+    padding-left: 0;
+  }
+  .pipeline > div:nth-child(even) {
+    border-left: 1px solid var(--line);
+  }
+  .closing-actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 620px) {
+  body {
+    font-size: 16px;
+  }
+  .masthead-nav {
+    display: none;
+  }
+  .masthead-meta {
+    display: none;
+  }
+  .pipeline {
+    grid-template-columns: 1fr;
+  }
+  .pipeline > div,
+  .pipeline > div:nth-child(even) {
+    padding-left: 0;
+    border-left: none;
+    border-top: 1px solid var(--line);
+    padding-top: 1rem;
+  }
+  .pipeline > div:first-child {
+    border-top: none;
+    padding-top: 0;
+  }
+  /* Methods table collapses to stacked records */
+  .spec,
+  .spec tbody,
+  .spec tr,
+  .spec td {
+    display: block;
+    width: 100%;
+  }
+  .spec thead {
+    display: none;
+  }
+  .spec tr {
+    border-bottom: 1px solid var(--ink);
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+  }
+  .spec td {
+    border-bottom: none;
+    padding: 0.2rem 0;
+  }
+  .spec .m-best::before {
+    content: "Ideal: ";
+    color: var(--ink-mute);
+  }
+  .notes li {
+    grid-template-columns: 1fr;
+    gap: 0.4rem;
+  }
+  .legal-block {
+    grid-template-columns: 1fr;
+    gap: 0.6rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.001ms !important;
+  }
+  .js .reveal {
+    opacity: 1;
+  }
+}

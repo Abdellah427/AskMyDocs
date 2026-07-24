@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# Local secrets and environment
+.env
+.streamlit/secrets.toml
+
+# Generated indexes and databases
+database/
+faiss_index_file
+pca_file
+.ragatouille/
+.ragatouille*/
+*.faiss
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Test and tooling caches
+.pytest_cache/
+.coverage
+htmlcov/

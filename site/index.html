@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script>
+      document.documentElement.classList.add("js");
+    </script>
+    <title>AskMyDocs — Assistant documentaire RAG</title>
+    <meta
+      name="description"
+      content="Assistant documentaire RAG : posez vos questions en langage naturel, obtenez des réponses fondées sur vos propres fichiers CSV et PDF."
+    />
+    <meta name="color-scheme" content="light" />
+    <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href="assets/fonts/fraunces.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="assets/fonts/hanken-grotesk.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <script src="assets/js/i18n.js" defer></script>
+    <script src="assets/js/main.js" defer></script>
+  </head>
+  <body>
+    <header class="masthead">
+      <div class="wrap masthead-row">
+        <a class="brand" href="index.html" aria-label="AskMyDocs">
+          <svg class="logo" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <rect x="6" y="3" width="20" height="26" rx="2" fill="#fff" stroke="#0e5a6b" stroke-width="2" />
+            <rect x="10" y="9" width="12" height="2.4" fill="#0e5a6b" />
+            <rect x="10" y="14.4" width="12" height="3.6" fill="#ffd65a" />
+            <rect x="10" y="20.6" width="8" height="2.4" fill="#0e5a6b" opacity="0.45" />
+          </svg>
+          <span>Ask<b>My</b>Docs</span>
+        </a>
+
+        <nav class="masthead-nav" aria-label="Sections">
+          <a href="#overview" data-i18n="nav.overview">Aperçu</a>
+          <a href="#how" data-i18n="nav.how">Fonctionnement</a>
+          <a href="#methods" data-i18n="nav.methods">Méthodes</a>
+          <a href="https://github.com/Abdellah427/AskMyDocs" data-i18n="nav.code">Code</a>
+        </nav>
+
+        <div class="masthead-actions">
+          <div class="lang-switch" role="group" aria-label="Langue / Language">
+            <button type="button" data-lang="fr" aria-pressed="true">FR</button>
+            <button type="button" data-lang="en" aria-pressed="false">EN</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <!-- Hero -->
+      <section class="hero">
+        <div class="wrap">
+          <div class="hero-kicker">
+            <span data-i18n="hero.eyebrow">Assistant documentaire RAG</span>
+            <span class="r">v1 — 2024/2025</span>
+          </div>
+          <div class="hero-grid">
+            <div>
+              <h1 data-i18n-html="hero.h1">Posez la question.<br /><em>Vos documents répondent.</em></h1>
+              <p class="hero-lede" data-i18n="hero.lede">
+                AskMyDocs indexe vos fichiers CSV et PDF en local, retrouve les passages les plus
+                pertinents pour votre question, puis s'appuie sur eux pour rédiger une réponse — avec
+                les sources à l'appui.
+              </p>
+              <div class="hero-cta">
+                <a class="btn btn-primary" href="https://github.com/Abdellah427/AskMyDocs" data-i18n="hero.cta1">Voir le code</a>
+                <a class="btn btn-ghost" href="#how" data-i18n="hero.cta2">Comment ça marche</a>
+              </div>
+              <p class="hero-note" data-i18n="hero.note">
+                Ce site n'utilise ni cookie, ni traceur, ni requête externe.
+              </p>
+            </div>
+
+            <!-- Annotated citation (signature) -->
+            <figure class="figure">
+              <figcaption class="cap" data-i18n="demo.fig">Un passage retrouvé et la réponse qui s'appuie dessus</figcaption>
+              <div class="excerpt-block">
+                <div class="excerpt-meta">
+                  <span class="file" data-i18n="demo.file">Movie_Collection.csv · ligne 218</span>
+                  <span class="score" data-i18n="demo.score">pertinence 0.94</span>
+                </div>
+                <p class="excerpt-text" data-i18n-html="demo.srcText">
+                  Titre : Titanic — Résumé : à bord du paquebot,
+                  <mark class="hl">Jack, un artiste sans le sou, et Rose, une jeune aristocrate</mark>,
+                  vivent une histoire d'amour interrompue par le naufrage.
+                </p>
+                <p class="excerpt-answer" data-i18n-html="demo.answer">
+                  Titanic raconte la romance entre Jack et Rose à bord du paquebot, jusqu'au naufrage.
+                  <span class="cite">source : ligne 218</span>
+                </p>
+              </div>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <!-- 01 Overview -->
+      <section class="section" id="overview">
+        <div class="wrap">
+          <div class="runhead">
+            <span class="num">01</span>
+            <span class="name" data-i18n="ov.eyebrow">Aperçu</span>
+            <span class="meta" data-i18n="ov.metaRun">CSV · PDF · réponses sourcées</span>
+          </div>
+          <div class="section-lead">
+            <h2 data-i18n="ov.h2">Un assistant qui s'appuie sur vos propres fichiers</h2>
+            <p data-i18n="ov.p">
+              Chargez vos documents, choisissez une méthode de recherche, posez vos questions en
+              langage naturel.
+            </p>
+          </div>
+          <div class="columns reveal" style="margin-top: clamp(1.75rem, 4vw, 2.75rem)">
+            <div>
+              <span class="col-k">a</span>
+              <h3 data-i18n="ov.c1t">CSV et PDF</h3>
+              <p data-i18n="ov.c1p">
+                Importez plusieurs fichiers à la fois. Les tableaux comme les documents texte sont
+                découpés en passages exploitables.
+              </p>
+            </div>
+            <div>
+              <span class="col-k">b</span>
+              <h3 data-i18n="ov.c2t">Réponses sourcées</h3>
+              <p data-i18n="ov.c2p">
+                Chaque réponse s'accompagne des passages retrouvés et de leur score de pertinence :
+                vous voyez d'où vient l'information.
+              </p>
+            </div>
+            <div>
+              <span class="col-k">c</span>
+              <h3 data-i18n="ov.c3t">Indexation locale</h3>
+              <p data-i18n="ov.c3p">
+                L'encodage et la recherche vectorielle s'exécutent sur votre machine avec FAISS ; vos
+                fichiers ne partent pas se faire indexer ailleurs.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 02 How it works -->
+      <section class="section" id="how">
+        <div class="wrap">
+          <div class="runhead">
+            <span class="num">02</span>
+            <span class="name" data-i18n="how.eyebrow">Fonctionnement</span>
+            <span class="meta">import → index → search → answer</span>
+          </div>
+          <div class="section-lead">
+            <h2 data-i18n="how.h2">De la question à la réponse, en quatre temps</h2>
+            <p data-i18n="how.p2">
+              Un pipeline simple, du fichier brut jusqu'à la réponse fondée sur vos passages.
+            </p>
+          </div>
+          <div class="pipeline reveal" style="margin-top: clamp(1.75rem, 4vw, 2.75rem)">
+            <div>
+              <div class="n">1</div>
+              <h3 data-i18n="how.s1t">Import</h3>
+              <p data-i18n="how.s1p">Vos CSV et PDF sont lus, puis découpés en passages de taille homogène.</p>
+            </div>
+            <div>
+              <div class="n">2</div>
+              <h3 data-i18n="how.s2t">Indexation</h3>
+              <p data-i18n="how.s2p">Chaque passage est transformé en vecteur et rangé dans un index FAISS.</p>
+            </div>
+            <div>
+              <div class="n">3</div>
+              <h3 data-i18n="how.s3t">Recherche</h3>
+              <p data-i18n="how.s3p">La question est comparée à l'index pour remonter les passages les plus proches.</p>
+            </div>
+            <div>
+              <div class="n">4</div>
+              <h3 data-i18n="how.s4t">Réponse</h3>
+              <p data-i18n="how.s4p">Le modèle de langage rédige une réponse fondée sur ces passages.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 03 Methods -->
+      <section class="section" id="methods">
+        <div class="wrap">
+          <div class="runhead">
+            <span class="num">03</span>
+            <span class="name" data-i18n="me.eyebrow">Méthodes de recherche</span>
+            <span class="meta" data-i18n="me.metaRun">3 stratégies interchangeables</span>
+          </div>
+          <div class="section-lead">
+            <h2 data-i18n="me.h2">Trois stratégies de recherche, un même objectif</h2>
+            <p data-i18n="me.p">Choisissez la méthode selon la taille du corpus et la précision recherchée.</p>
+          </div>
+          <table class="spec reveal" style="margin-top: clamp(1.5rem, 3vw, 2.25rem)">
+            <thead>
+              <tr>
+                <th data-i18n="me.thMethod">Méthode</th>
+                <th data-i18n="me.thDesc">Description</th>
+                <th data-i18n="me.thBest">Idéal pour</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="m-name">Retriever MiniLM<span class="m-tag" data-i18n="me.m1tag">Vecteur</span></td>
+                <td class="m-desc" data-i18n="me.m1p">
+                  Encodage all-MiniLM-L6-v2 et recherche vectorielle FAISS. Léger et rapide, idéal pour
+                  démarrer.
+                </td>
+                <td class="m-best" data-i18n="me.m1best">petits et moyens corpus</td>
+              </tr>
+              <tr>
+                <td class="m-name">ColBERTv2<span class="m-tag" data-i18n="me.m2tag">Précision</span></td>
+                <td class="m-desc" data-i18n="me.m2p">
+                  Recherche à interaction tardive : chaque terme de la question est confronté au
+                  document pour un appariement plus fin.
+                </td>
+                <td class="m-best" data-i18n="me.m2best">questions précises</td>
+              </tr>
+              <tr>
+                <td class="m-name">PCA + Rerank<span class="m-tag" data-i18n="me.m3tag">Reclassement</span></td>
+                <td class="m-desc" data-i18n="me.m3p">
+                  Rappel rapide sur un index FAISS réduit par PCA, puis reclassement des candidats sur
+                  les embeddings complets.
+                </td>
+                <td class="m-best" data-i18n="me.m3best">grands corpus</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 04 Under the hood -->
+      <section class="section">
+        <div class="wrap">
+          <div class="runhead">
+            <span class="num">04</span>
+            <span class="name" data-i18n="st.eyebrow">Sous le capot</span>
+            <span class="meta">Python · Streamlit · FAISS</span>
+          </div>
+          <div class="uth" style="margin-top: clamp(1.5rem, 3vw, 2.25rem)">
+            <div>
+              <p class="stack-line" data-i18n-html="st.stackLine">
+                <b>Python</b> · Streamlit · FAISS · sentence-transformers · ColBERTv2 · LangChain ·
+                pdfplumber · Mistral AI · NumPy · pandas
+              </p>
+            </div>
+            <ul class="notes">
+              <li>
+                <h3 data-i18n="st.e1t">Confidentiel par défaut</h3>
+                <p data-i18n="st.e1p">
+                  Indexation et recherche en local ; ce site ne dépose aucun cookie et n'appelle
+                  aucun service tiers.
+                </p>
+              </li>
+              <li>
+                <h3 data-i18n="st.e2t">Recherche testée</h3>
+                <p data-i18n="st.e2p">
+                  Un test d'aller-retour vérifie qu'une question retrouve bien, en tête, le passage
+                  attendu.
+                </p>
+              </li>
+              <li>
+                <h3 data-i18n="st.e3t">Multi-plateforme</h3>
+                <p data-i18n="st.e3p">Des lanceurs prêts à l'emploi pour Windows et pour Linux ou macOS.</p>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 05 Closing -->
+      <section class="section">
+        <div class="wrap">
+          <div class="runhead">
+            <span class="num">05</span>
+            <span class="name" data-i18n="cta.eyebrow">Le code</span>
+            <span class="meta">open source</span>
+          </div>
+          <div class="closing">
+            <div>
+              <h2 data-i18n="cta.h2">Le projet est open source</h2>
+              <p data-i18n="cta.p">
+                Parcourez le code, lancez l'assistant en local, ou lisez le rapport qui détaille la
+                démarche.
+              </p>
+            </div>
+            <div class="closing-actions">
+              <a class="btn btn-primary" href="https://github.com/Abdellah427/AskMyDocs" data-i18n="cta.b1">Voir sur GitHub</a>
+              <a class="arrow" href="https://github.com/Abdellah427/AskMyDocs/blob/main/Rapport.pdf" data-i18n="cta.b2">Lire le rapport (PDF)</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="colophon">
+      <div class="wrap">
+        <div class="colophon-grid">
+          <div class="colophon-brand">
+            <a class="brand" href="index.html" aria-label="AskMyDocs">
+              <svg class="logo" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+                <rect x="6" y="3" width="20" height="26" rx="2" fill="#fff" stroke="#0e5a6b" stroke-width="2" />
+                <rect x="10" y="9" width="12" height="2.4" fill="#0e5a6b" />
+                <rect x="10" y="14.4" width="12" height="3.6" fill="#ffd65a" />
+                <rect x="10" y="20.6" width="8" height="2.4" fill="#0e5a6b" opacity="0.45" />
+              </svg>
+              <span>Ask<b>My</b>Docs</span>
+            </a>
+            <p data-i18n="ft.tagline">
+              Assistant documentaire RAG. Projet personnel, réalisé dans un cadre académique à
+              CY Tech (2024-2025).
+            </p>
+          </div>
+          <div class="colophon-links">
+            <div class="colophon-col">
+              <h4 data-i18n="ft.col1">Projet</h4>
+              <ul>
+                <li><a href="#overview" data-i18n="nav.overview">Aperçu</a></li>
+                <li><a href="#how" data-i18n="nav.how">Fonctionnement</a></li>
+                <li><a href="#methods" data-i18n="nav.methods">Méthodes</a></li>
+              </ul>
+            </div>
+            <div class="colophon-col">
+              <h4 data-i18n="ft.col2">Ressources</h4>
+              <ul>
+                <li><a href="https://github.com/Abdellah427/AskMyDocs" data-i18n="ft.code">Code source</a></li>
+                <li><a href="https://github.com/Abdellah427/AskMyDocs/blob/main/Rapport.pdf" data-i18n="ft.report">Rapport (PDF)</a></li>
+                <li><a href="mentions.html" data-i18n="ft.legal">Mentions légales</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="colophon-bottom">
+          <span data-i18n="ft.rights">© 2026 Abdellah Hassani. Tous droits réservés.</span>
+          <span data-i18n="ft.privacy">Sans cookie · Sans traceur · Hébergé en France</span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
