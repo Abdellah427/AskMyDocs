@@ -21,12 +21,37 @@ RERANKER_MODEL = os.environ.get(
 GENERATION_MODEL = os.environ.get("MISTRAL_MODEL", "mistral-large-latest")
 
 
+_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+def _from_env_file(key: str) -> str:
+    """Read ``key`` straight from a local .env file (KEY=VALUE lines).
+
+    Looked up next to the project (and in the current directory), so it works
+    even when the app is launched directly with ``streamlit run app.py``.
+    """
+    for path in (os.path.join(_ROOT, ".env"), ".env"):
+        try:
+            with open(path, encoding="utf-8") as handle:
+                for line in handle:
+                    stripped = line.strip()
+                    if not stripped or stripped.startswith("#") or "=" not in stripped:
+                        continue
+                    name, value = stripped.split("=", 1)
+                    if name.strip() == key:
+                        return value.strip().strip('"').strip("'")
+        except OSError:
+            continue
+    return ""
+
+
 def get_mistral_api_key() -> str:
     """Return the Mistral API key, or an empty string if none is configured.
 
     Resolution order:
         1. ``st.secrets["MISTRAL_API_KEY"]`` (``.streamlit/secrets.toml``)
         2. the ``MISTRAL_API_KEY`` environment variable
+        3. a local ``.env`` file
     """
     try:
         import streamlit as st
@@ -38,4 +63,4 @@ def get_mistral_api_key() -> str:
     except Exception:
         pass
 
-    return os.environ.get("MISTRAL_API_KEY", "")
+    return os.environ.get("MISTRAL_API_KEY") or _from_env_file("MISTRAL_API_KEY")
