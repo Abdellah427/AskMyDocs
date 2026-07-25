@@ -1,0 +1,5 @@
+[server]
+# Streamlit's source watcher walks imported modules, which makes transformers
+# lazily import optional vision models (yolos, zoedepth) that need torchvision.
+# The app does not use them; disabling the watcher removes those noisy warnings.
+fileWatcherType = "none"
