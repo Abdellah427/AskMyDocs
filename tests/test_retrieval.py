@@ -1,45 +1,54 @@
-"""Round-trip test for the FAISS vector retriever (CustomVectorRetriever)."""
+"""Tests for the retrieval core: dense, hybrid (BM25 + RRF) and rerank."""
 
-import faiss
-from langchain_core.documents import Document
+import numpy as np
 
-from src.CustomVectorRetriever import CustomVectorRetriever
-from tests.embedding import build_corpus, embed
-
-
-def _build_retriever():
-    docs, embeddings = build_corpus()
-    index = faiss.IndexFlatL2(embeddings.shape[1])
-    index.add(embeddings)
-    documents = [Document(page_content=d, metadata={"content": d}) for d in docs]
-    return CustomVectorRetriever(embedding_function=embed, index=index, documents=documents)
+from src.retrieval import RagIndex, reciprocal_rank_fusion
+from tests.embedding import build_passages, embed, keyword_cross_encoder
 
 
-def test_retriever_returns_the_matching_topic():
-    retriever = _build_retriever()
+def _index():
+    passages, embeddings = build_passages()
+    return RagIndex(passages, embeddings, embed)
 
-    results = retriever.retrieve("tell me about the cat", k=1)
 
+def test_reciprocal_rank_fusion_prefers_agreement():
+    a = [(1, 0.9), (2, 0.5), (3, 0.1)]
+    b = [(2, 0.8), (1, 0.7), (4, 0.2)]
+    fused = reciprocal_rank_fusion([a, b])
+    # Items 1 and 2 rank high in both lists, so they come first.
+    assert {idx for idx, _ in fused[:2]} == {1, 2}
+
+
+def test_dense_returns_matching_topic():
+    idx = _index()
+    results = idx.dense("tell me about the cat", k=1)
     assert len(results) == 1
-    assert "cat" in results[0].page_content
+    assert "cat" in results[0].text
+    assert results[0].source == "corpus.csv"
 
 
-def test_retriever_respects_k():
-    retriever = _build_retriever()
-
-    results = retriever.retrieve("ocean waves", k=3)
-
-    assert len(results) == 3
-    # The closest document is the strong ocean document.
-    assert "ocean" in results[0].page_content
+def test_dense_respects_k():
+    idx = _index()
+    assert len(idx.dense("ocean waves", k=3)) == 3
 
 
-def test_retriever_langchain_invoke_entrypoint():
-    # The standard LangChain entry point must work too, not just retrieve().
-    retriever = _build_retriever()
-    retriever.k = 2
-
-    results = retriever.invoke("a dog in the park")
-
+def test_hybrid_returns_matching_topic():
+    idx = _index()
+    results = idx.hybrid("a question about music", k=2)
     assert len(results) == 2
-    assert any("dog" in doc.page_content for doc in results)
+    assert all("music" in p.text for p in results)
+
+
+def test_rerank_orders_by_cross_encoder():
+    idx = _index()
+    results = idx.rerank("dog dog park", score_fn=keyword_cross_encoder, k=2)
+    assert len(results) == 2
+    assert all("dog" in p.text for p in results)
+    # Scores are non-increasing after reranking.
+    assert results[0].score >= results[1].score
+
+
+def test_empty_corpus_is_safe():
+    idx = RagIndex([], np.zeros((0, len(embed(["x"])[0])), dtype="float32"), embed)
+    assert idx.dense("anything", k=3) == []
+    assert idx.hybrid("anything", k=3) == []

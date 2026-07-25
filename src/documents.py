@@ -29,29 +29,45 @@ def csv_to_list_str(csv_path: str) -> List[str]:
 
     rows = []
     for _, row in df.iterrows():
-        row_text = [f"{column}: {row[column]}\n\n" for column in df.columns]
-        rows.append(" ".join(row_text))
+        row_text = [f"{column}: {row[column]}" for column in df.columns]
+        rows.append(" | ".join(row_text))
     return rows
+
+
+def chunk_text(text: str, max_words: int = 180, overlap_words: int = 30) -> List[str]:
+    """Split text into overlapping word windows.
+
+    Overlap keeps information that straddles a boundary retrievable from at least
+    one chunk.
+
+    Args:
+        text: The text to split.
+        max_words: Maximum number of words per chunk.
+        overlap_words: Number of words shared between consecutive chunks.
+
+    Returns:
+        The (possibly overlapping) chunks.
+    """
+    words = text.split()
+    if not words:
+        return []
+    if len(words) <= max_words:
+        return [" ".join(words)]
+
+    step = max(1, max_words - overlap_words)
+    chunks = []
+    for start in range(0, len(words), step):
+        chunks.append(" ".join(words[start : start + max_words]))
+        if start + max_words >= len(words):
+            break
+    return chunks
 
 
 def group_paragraphs(
     paragraphs: List[str], min_characters: int = 300, max_characters: int = 1400
 ) -> List[str]:
-    """Group short paragraphs so each chunk sits between a minimum and a
-    maximum length.
-
-    A chunk keeps growing while it stays under ``max_characters``. Once adding
-    the next paragraph would overflow, the chunk is emitted only if it already
-    reached ``min_characters``; otherwise the paragraph is merged in anyway so a
-    chunk is never left too small to be useful.
-
-    Args:
-        paragraphs: Cleaned, non-empty paragraphs in reading order.
-        min_characters: Minimum size before a chunk may be emitted.
-        max_characters: Preferred maximum size for a chunk.
-
-    Returns:
-        The grouped chunks.
+    """Group short paragraphs so each chunk sits between a minimum and a maximum
+    length. Kept as a utility for callers that want paragraph-aware grouping.
     """
     grouped: List[str] = []
     current = ""
@@ -60,7 +76,6 @@ def group_paragraphs(
         if len(current) + len(paragraph) + 1 <= max_characters:
             current += " " + paragraph
         elif len(current) < min_characters:
-            # Too small to stand alone: merge even if it overflows the maximum.
             current += " " + paragraph
         else:
             grouped.append(current.strip())
@@ -72,34 +87,30 @@ def group_paragraphs(
 
 
 def extract_paragraphs_from_pdf(
-    pdf_path: str, min_characters: int = 300, max_characters: int = 1400
+    pdf_path: str, max_words: int = 180, overlap_words: int = 30
 ) -> List[str]:
-    """Extract text from a PDF and return it as length-bounded chunks.
+    """Extract text from a PDF and return it as overlapping chunks.
 
     Args:
         pdf_path: Path to the PDF file.
-        min_characters: Minimum size before a chunk may be emitted.
-        max_characters: Preferred maximum size for a chunk.
+        max_words: Maximum number of words per chunk.
+        overlap_words: Number of words shared between consecutive chunks.
 
     Returns:
-        The extracted, grouped chunks.
+        The extracted, overlapping chunks.
     """
     # Imported lazily: pdfplumber is only needed when a PDF is actually read.
     import pdfplumber
 
-    paragraphs: List[str] = []
+    pages: List[str] = []
     with pdfplumber.open(pdf_path) as pdf:
         for page in pdf.pages:
             text = page.extract_text()
             if text:
                 # Keep only characters that round-trip through UTF-8.
-                utf8_text = text.encode("utf-8", errors="ignore").decode(
-                    "utf-8", errors="ignore"
-                )
-                paragraphs.extend(utf8_text.split("\n\n"))
+                pages.append(text.encode("utf-8", errors="ignore").decode("utf-8", errors="ignore"))
 
-    paragraphs = [p.strip() for p in paragraphs if p.strip()]
-    return group_paragraphs(paragraphs, min_characters, max_characters)
+    return chunk_text("\n".join(pages), max_words=max_words, overlap_words=overlap_words)
 
 
 def files_to_list_str(
@@ -111,14 +122,6 @@ def files_to_list_str(
 
     The reader functions are injectable to keep this dispatch logic testable
     without touching the filesystem or PDF stack.
-
-    Args:
-        file_paths: Paths to CSV or PDF files.
-        csv_reader: Function used to read a CSV file.
-        pdf_reader: Function used to read a PDF file.
-
-    Returns:
-        The concatenated chunks from every supported file.
     """
     full_doc: List[str] = []
     for file_path in file_paths:
@@ -128,3 +131,15 @@ def files_to_list_str(
         elif extension == ".pdf":
             full_doc.extend(pdf_reader(file_path))
     return full_doc
+
+
+def files_to_passages(file_paths: List[str]):
+    """Read files into Passage objects that carry their source filename."""
+    from src.retrieval import Passage
+
+    passages = []
+    for file_path in file_paths:
+        source = os.path.basename(file_path)
+        for chunk in files_to_list_str([file_path]):
+            passages.append(Passage(text=chunk, source=source))
+    return passages

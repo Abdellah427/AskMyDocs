@@ -1,36 +1,74 @@
-from mistralai import Mistral
+"""Answer generation with Mistral, grounded in the retrieved passages."""
+
+from typing import List, Optional
+
+from src.config import GENERATION_MODEL
+
+SYSTEM_PROMPT = (
+    "You are a careful documentation assistant. Answer the user's question using "
+    "ONLY the provided sources. Cite the sources you rely on as [1], [2], etc. "
+    "If the answer is not in the sources, say clearly that you don't know rather "
+    "than guessing. Reply in the same language as the question, and stay concise."
+)
 
 
-def query_mistral(user_input: str, history: list[str], api_key: str) -> str:
-    """Query the Mistral model with the recent conversation as context.
+def build_context(passages: Optional[List[dict]]) -> str:
+    """Format retrieved passages as a numbered, source-labelled context block."""
+    if not passages:
+        return ""
+    blocks = []
+    for i, passage in enumerate(passages, start=1):
+        source = passage.get("source") or "document"
+        text = passage.get("text", "")
+        blocks.append(f"[{i}] (source: {source})\n{text}")
+    return "\n\n".join(blocks)
+
+
+def query_mistral(
+    user_input: str,
+    history: List[str],
+    api_key: str,
+    passages: Optional[List[dict]] = None,
+) -> str:
+    """Generate an answer grounded in the retrieved passages.
 
     Args:
-        user_input: The question or input text to send to the model.
-        history: Previous messages in the conversation.
+        user_input: The user's question.
+        history: Previous conversation lines.
         api_key: The Mistral API key.
+        passages: Retrieved passages (dicts with ``source``/``text``).
 
     Returns:
-        The model's response, or a short message if the request fails.
+        The model's answer, or a short message on failure / missing key.
     """
     if not api_key:
         return "No Mistral API key is configured. Set MISTRAL_API_KEY to enable answers."
 
-    model = "mistral-large-latest"
-    client = Mistral(api_key=api_key)
+    context = build_context(passages)
+    if not context:
+        context = "(no sources retrieved)"
 
-    # Use the last few messages as context.
-    conversation_history = "\n".join(history[-5:])
-    prompt = f"{conversation_history}\nYou: {user_input}\nBot:"
+    recent = "\n".join(history[-4:])
+    user_content = (
+        (f"Conversation so far:\n{recent}\n\n" if recent else "")
+        + f"Sources:\n{context}\n\nQuestion: {user_input}"
+    )
 
     try:
+        from mistralai import Mistral
+
+        client = Mistral(api_key=api_key)
         response = client.chat.complete(
-            model=model,
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=150,
-            temperature=0.7,
+            model=GENERATION_MODEL,
+            messages=[
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": user_content},
+            ],
+            max_tokens=600,
+            temperature=0.2,
             top_p=0.9,
         )
         return response.choices[0].message.content
-    except Exception as e:
-        print(f"Detailed error: {e}")
+    except Exception as exc:
+        print(f"Detailed error: {exc}")
         return "Sorry, an error occurred while processing your request."

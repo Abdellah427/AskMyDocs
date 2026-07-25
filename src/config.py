@@ -1,10 +1,21 @@
-"""Runtime configuration.
+"""Runtime configuration: model names and the Mistral API key.
 
-The Mistral API key is read from Streamlit secrets first, then from the
-``MISTRAL_API_KEY`` environment variable. It is never hard-coded in the source.
+Everything is overridable through environment variables so models can be swapped
+without touching the code.
 """
 
 import os
+
+# Multilingual embedding model (handles French and English well, no prefix needed).
+EMBEDDING_MODEL = os.environ.get(
+    "EMBEDDING_MODEL", "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+)
+
+# Multilingual cross-encoder used to rerank retrieved passages.
+RERANKER_MODEL = os.environ.get("RERANKER_MODEL", "BAAI/bge-reranker-v2-m3")
+
+# LLM used to write the final answer.
+GENERATION_MODEL = os.environ.get("MISTRAL_MODEL", "mistral-large-latest")
 
 
 def get_mistral_api_key() -> str:

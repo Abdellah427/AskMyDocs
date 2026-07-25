@@ -2,7 +2,7 @@
 
 import csv
 
-from src.documents import csv_to_list_str, files_to_list_str, group_paragraphs
+from src.documents import chunk_text, csv_to_list_str, files_to_list_str, group_paragraphs
 
 
 def test_csv_round_trip(tmp_path):
@@ -57,6 +57,26 @@ def test_files_to_list_str_dispatch():
     assert result == ["CSV::a.csv", "PDF::b.pdf", "CSV::d.CSV"]
     assert calls["csv"] == ["a.csv", "d.CSV"]
     assert calls["pdf"] == ["b.pdf"]
+
+
+def test_chunk_text_empty_and_short():
+    assert chunk_text("") == []
+    assert chunk_text("just a few words", max_words=10) == ["just a few words"]
+
+
+def test_chunk_text_overlap():
+    text = " ".join(f"w{i}" for i in range(100))
+    chunks = chunk_text(text, max_words=40, overlap_words=10)
+
+    assert len(chunks) > 1
+    # Every chunk (but the last) has the max size.
+    assert all(len(c.split()) == 40 for c in chunks[:-1])
+    # Consecutive chunks overlap by exactly overlap_words.
+    first_words = chunks[0].split()
+    second_words = chunks[1].split()
+    assert first_words[-10:] == second_words[:10]
+    # No word is lost.
+    assert first_words[0] == "w0" and chunks[-1].split()[-1] == "w99"
 
 
 def test_group_paragraphs_empty():

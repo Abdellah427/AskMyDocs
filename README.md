@@ -18,18 +18,20 @@ machine; only the final answer generation calls an external language model.
 
 ## Features
 
-- **CSV and PDF input.** Import several files at once; spreadsheets and text
-  documents alike are split into evenly sized passages.
-- **Grounded answers.** Each answer comes with the retrieved passages and their
-  relevance score, so you can see where the information comes from.
-- **Three retrieval methods**, selectable in the interface:
-  - **Retriever** - all-MiniLM-L6-v2 embeddings with a FAISS vector search.
-    Light and fast, a good default for small to medium corpora.
-  - **ColBERTv2** - late-interaction retrieval, where each query term is matched
-    against the document for finer alignment. Best for precise questions.
-  - **Rerank** - a fast first pass over a PCA-reduced FAISS index recalls
-    candidates, which are then re-ranked using the full embeddings. Suited to
-    larger corpora.
+- **CSV and PDF input.** Import several files at once; documents are split into
+  overlapping chunks so information that straddles a boundary stays retrievable.
+- **Grounded answers.** The model answers only from the retrieved passages,
+  cites its sources, and says when it does not know. Each passage is shown with
+  its source file and relevance score.
+- **Multilingual embeddings.** A multilingual sentence-transformers model, with
+  cosine similarity over a FAISS index.
+- **Three retrieval methods**, switchable at any time (they share one index):
+  - **Dense** - normalized multilingual embeddings with FAISS cosine search. A
+    fast, solid baseline.
+  - **Hybrid** - dense search combined with BM25 keyword search, fused with
+    Reciprocal Rank Fusion for better coverage.
+  - **Rerank** - hybrid recall, then a cross-encoder re-ranks the candidates for
+    top precision.
 
 ## Getting started
 
@@ -90,8 +92,10 @@ pip install pytest
 python -m pytest
 ```
 
-The tests exercise CSV parsing, PDF-chunk grouping, the FAISS retrieval
-round-trip, and the PCA + rerank pipeline on a small in-memory corpus.
+The tests exercise CSV parsing, overlapping chunking, the dense / hybrid /
+rerank retrieval pipeline, Reciprocal Rank Fusion, recall@k evaluation, and the
+grounded-prompt builder, all on a small in-memory corpus with a deterministic
+stand-in embedding (no model download, no network).
 
 ## Project structure
 
@@ -99,12 +103,14 @@ round-trip, and the PCA + rerank pipeline on a small in-memory corpus.
 app.py                 Streamlit entry point
 src/
   interfaceG.py        UI flow and session handling
-  documents.py         CSV/PDF loading and chunking
-  create_db.py         Vector and ColBERTv2 index construction and querying
-  rerank.py            PCA-accelerated FAISS search with a rerank stage
-  CustomVectorRetriever.py   FAISS-backed LangChain retriever
-  llm_interface.py     Mistral answer generation
-  config.py            API key resolution
+  documents.py         CSV/PDF loading and overlapping chunking
+  embeddings.py        Sentence-transformers embedding wrapper
+  retrieval.py         Dense, hybrid (BM25 + RRF) and rerank search
+  reranker.py          Cross-encoder reranker
+  create_db.py         Index construction and query dispatch
+  llm_interface.py     Grounded answer generation with Mistral
+  eval.py              recall@k evaluation
+  config.py            Model names and API key resolution
 tests/                 Offline test suite
 site/                  Static showcase site
 ```

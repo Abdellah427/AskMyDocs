@@ -193,28 +193,28 @@
             </thead>
             <tbody>
               <tr>
-                <td class="m-name">Retriever MiniLM<span class="m-tag" data-i18n="me.m1tag">Vecteur</span></td>
+                <td class="m-name"><span data-i18n="me.m1name">Recherche dense</span><span class="m-tag" data-i18n="me.m1tag">Vecteur</span></td>
                 <td class="m-desc" data-i18n="me.m1p">
-                  Encodage all-MiniLM-L6-v2 et recherche vectorielle FAISS. Léger et rapide, idéal pour
-                  démarrer.
+                  Embeddings multilingues normalisés et recherche vectorielle FAISS (cosinus). Rapide,
+                  bonne base.
                 </td>
-                <td class="m-best" data-i18n="me.m1best">petits et moyens corpus</td>
+                <td class="m-best" data-i18n="me.m1best">base rapide</td>
               </tr>
               <tr>
-                <td class="m-name">ColBERTv2<span class="m-tag" data-i18n="me.m2tag">Précision</span></td>
+                <td class="m-name"><span data-i18n="me.m2name">Recherche hybride</span><span class="m-tag" data-i18n="me.m2tag">Dense + BM25</span></td>
                 <td class="m-desc" data-i18n="me.m2p">
-                  Recherche à interaction tardive : chaque terme de la question est confronté au
-                  document pour un appariement plus fin.
+                  Combine la recherche dense et BM25 (mots-clés), fusionnées par Reciprocal Rank
+                  Fusion. Meilleure couverture.
                 </td>
-                <td class="m-best" data-i18n="me.m2best">questions précises</td>
+                <td class="m-best" data-i18n="me.m2best">meilleure couverture</td>
               </tr>
               <tr>
-                <td class="m-name">PCA + Rerank<span class="m-tag" data-i18n="me.m3tag">Reclassement</span></td>
+                <td class="m-name"><span data-i18n="me.m3name">Reranking</span><span class="m-tag" data-i18n="me.m3tag">Cross-encoder</span></td>
                 <td class="m-desc" data-i18n="me.m3p">
-                  Rappel rapide sur un index FAISS réduit par PCA, puis reclassement des candidats sur
-                  les embeddings complets.
+                  Rappel hybride, puis reclassement des candidats par un cross-encoder pour la
+                  précision maximale.
                 </td>
-                <td class="m-best" data-i18n="me.m3best">grands corpus</td>
+                <td class="m-best" data-i18n="me.m3best">précision maximale</td>
               </tr>
             </tbody>
           </table>
@@ -232,8 +232,8 @@
           <div class="uth" style="margin-top: clamp(1.5rem, 3vw, 2.25rem)">
             <div>
               <p class="stack-line" data-i18n-html="st.stackLine">
-                <b>Python</b> · Streamlit · FAISS · sentence-transformers · ColBERTv2 · LangChain ·
-                pdfplumber · Mistral AI · NumPy · pandas
+                <b>Python</b> · Streamlit · FAISS · sentence-transformers · cross-encoder · BM25 ·
+                Mistral AI · pdfplumber · NumPy · pandas
               </p>
             </div>
             <ul class="notes">
