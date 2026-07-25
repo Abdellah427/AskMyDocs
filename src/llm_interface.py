@@ -56,7 +56,13 @@ def query_mistral(
 
     try:
         from mistralai import Mistral
+    except ImportError:
+        return (
+            "The 'mistralai' package (>= 1.0) is not installed correctly. "
+            'Reinstall it with: pip install --force-reinstall "mistralai>=1.0"'
+        )
 
+    try:
         client = Mistral(api_key=api_key)
         response = client.chat.complete(
             model=GENERATION_MODEL,

@@ -38,6 +38,13 @@ if not exist ".venv\.installed" (
   echo ok> ".venv\.installed"
 )
 
+REM Self-heal a broken mistralai install (the "cannot import name 'Mistral'" case)
+python -c "from mistralai import Mistral" 1>nul 2>nul
+if errorlevel 1 (
+  echo Repairing the mistralai package...
+  python -m pip install --force-reinstall --no-cache-dir "mistralai>=1.0"
+)
+
 REM 4. Load MISTRAL_API_KEY from a local .env file if present
 if exist ".env" (
   for /f "usebackq eol=# tokens=1,* delims==" %%A in (".env") do set "%%A=%%B"

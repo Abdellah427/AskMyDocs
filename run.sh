@@ -29,6 +29,12 @@ if [ ! -f ".venv/.installed" ]; then
   touch ".venv/.installed"
 fi
 
+# Self-heal a broken mistralai install (the "cannot import name 'Mistral'" case).
+if ! python -c "from mistralai import Mistral" >/dev/null 2>&1; then
+  echo "Repairing the mistralai package..."
+  python -m pip install --force-reinstall --no-cache-dir "mistralai>=1.0"
+fi
+
 # Load MISTRAL_API_KEY from a local .env file if present.
 if [ -f ".env" ]; then
   set -a
