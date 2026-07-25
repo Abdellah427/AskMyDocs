@@ -71,4 +71,4 @@ def query_mistral(
         return response.choices[0].message.content
     except Exception as exc:
         print(f"Detailed error: {exc}")
-        return "Sorry, an error occurred while processing your request."
+        return f"The request to the model failed: {type(exc).__name__}: {exc}"
