@@ -7,7 +7,6 @@ import faiss
 import numpy as np
 import streamlit as st
 from langchain_core.documents import Document
-from ragatouille import RAGPretrainedModel
 from sentence_transformers import SentenceTransformer
 
 # Re-exported so existing callers (interfaceG) can keep using create_db.*.
@@ -21,6 +20,23 @@ from src.CustomVectorRetriever import CustomVectorRetriever
 
 # In-process cache of the ColBERT model used while building an index.
 RAG_Corbert = None
+
+
+def _load_ragatouille():
+    """Import ragatouille lazily so the app starts even when it is missing.
+
+    ColBERTv2 is an optional method: ragatouille pins an older LangChain, so it
+    is only imported when that method is actually used.
+    """
+    try:
+        from ragatouille import RAGPretrainedModel
+    except ImportError as exc:
+        raise RuntimeError(
+            "The ColBERTv2 method requires the optional 'ragatouille' package "
+            "(install it with a LangChain 0.3 environment). Use the Retriever or "
+            "Rerank method instead."
+        ) from exc
+    return RAGPretrainedModel
 
 
 # ----------------------------------------------------------------------------
@@ -37,7 +53,7 @@ def create_vector_db_colbertv2(documents: List[str], max_document_length: int = 
         The path to the created index.
     """
     global RAG_Corbert
-    RAG_Corbert = RAGPretrainedModel.from_pretrained("colbert-ir/colbertv2.0")
+    RAG_Corbert = _load_ragatouille().from_pretrained("colbert-ir/colbertv2.0")
 
     index_path = RAG_Corbert.index(
         collection=documents,
@@ -72,7 +88,7 @@ def query_vector_db_colbertv2(query_text: str, n_results: int = 5) -> List[dict]
     # every query.
     model = st.session_state.get("colbert_model")
     if model is None:
-        model = RAGPretrainedModel.from_index(index_path)
+        model = _load_ragatouille().from_index(index_path)
         st.session_state["colbert_model"] = model
 
     return model.search(query_text, k=n_results)
