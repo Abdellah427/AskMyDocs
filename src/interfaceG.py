@@ -3,7 +3,6 @@ import os
 import streamlit as st
 
 import src.create_db as create_db
-import src.helpers as helpers
 import src.llm_interface as llm_interface
 
 RAG_METHODS = create_db.METHODS  # ["Dense", "Hybride", "Rerank"]
@@ -53,10 +52,9 @@ def handle_send_message(mistral_key):
     st.session_state["docs"] = docs
 
     response = llm_interface.query_mistral(user_input, st.session_state.history, mistral_key, docs)
-    formatted_response = helpers.format_response(response)
 
     st.session_state.history.append(f"You: {user_input}")
-    st.session_state.history.append(f"Chatbot: \n\n{formatted_response}")
+    st.session_state.history.append(f"Chatbot: \n\n{response}")
 
     st.session_state.user_input = ""
     return docs
