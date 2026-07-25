@@ -1,23 +1,33 @@
 #!/usr/bin/env bash
-# Launch AskMyDocs locally on Linux or macOS.
-# Creates a virtual environment, installs dependencies, then starts the app.
+# One-click launcher for AskMyDocs on Linux or macOS.
+# Checks Python, creates the virtual environment, installs the dependencies
+# (once), loads the API key, and starts the app.
 
 set -e
 cd "$(dirname "$0")"
 
 PY="${PYTHON:-python3}"
 
+if ! command -v "$PY" >/dev/null 2>&1; then
+  echo "Python 3 not found. Install Python 3.10+ and run this script again."
+  exit 1
+fi
+
 if [ ! -d ".venv" ]; then
-  echo "Creating virtual environment..."
+  echo "Creating the virtual environment..."
   "$PY" -m venv .venv
 fi
 
 # shellcheck disable=SC1091
 . .venv/bin/activate
 
-echo "Installing dependencies..."
-python -m pip install --upgrade pip >/dev/null
-python -m pip install -r requirements.txt
+# Dependencies are installed once; delete .venv/.installed to force a reinstall.
+if [ ! -f ".venv/.installed" ]; then
+  echo "Installing dependencies. The first run can take a few minutes..."
+  python -m pip install --upgrade pip >/dev/null
+  python -m pip install -r requirements.txt
+  touch ".venv/.installed"
+fi
 
 # Load MISTRAL_API_KEY from a local .env file if present.
 if [ -f ".env" ]; then
@@ -28,7 +38,8 @@ if [ -f ".env" ]; then
 fi
 
 if [ -z "${MISTRAL_API_KEY:-}" ]; then
-  echo "Warning: MISTRAL_API_KEY is not set. Copy .env.example to .env and add your key to enable answers."
+  echo "Note: MISTRAL_API_KEY is not set. Search works, but answer generation is disabled."
+  echo "To enable it, copy .env.example to .env and put your key in it."
 fi
 
 echo "Starting AskMyDocs..."
