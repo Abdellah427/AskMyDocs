@@ -11,8 +11,11 @@ EMBEDDING_MODEL = os.environ.get(
     "EMBEDDING_MODEL", "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
 )
 
-# Multilingual cross-encoder used to rerank retrieved passages.
-RERANKER_MODEL = os.environ.get("RERANKER_MODEL", "BAAI/bge-reranker-v2-m3")
+# Multilingual cross-encoder used to rerank retrieved passages. This default is
+# light (~120 MB); for maximum quality set RERANKER_MODEL=BAAI/bge-reranker-v2-m3.
+RERANKER_MODEL = os.environ.get(
+    "RERANKER_MODEL", "cross-encoder/mmarco-mMiniLMv2-L12-H384-v1"
+)
 
 # LLM used to write the final answer.
 GENERATION_MODEL = os.environ.get("MISTRAL_MODEL", "mistral-large-latest")
