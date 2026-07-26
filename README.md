@@ -53,6 +53,9 @@ environment if needed, and starts the app.
   ./launch.sh
   ```
 
+To remove the local environment (keeping your code and documents), run
+**`uninstall.bat`** (Windows) or `./uninstall.sh` (Linux/macOS).
+
 ### Manual setup
 
 ```bash
