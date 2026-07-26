@@ -1,7 +1,10 @@
 @echo off
-REM One-click launcher for AskMyDocs on Windows.
-REM Checks Python, creates the virtual environment, installs the dependencies
-REM (once), loads the API key, and starts the app. Just double-click this file.
+REM ============================================================
+REM  AskMyDocs - one-click launcher for Windows.
+REM  Just double-click this file. It checks Python, sets up the
+REM  environment, repairs it if needed, runs a self-test, and
+REM  only then starts the app.
+REM ============================================================
 
 setlocal enabledelayedexpansion
 cd /d "%~dp0"
@@ -11,7 +14,7 @@ where python >nul 2>&1
 if errorlevel 1 (
   echo.
   echo Python was not found. Install Python 3.10+ from https://www.python.org/downloads/
-  echo and tick "Add Python to PATH" during setup, then run this file again.
+  echo and tick "Add Python to PATH" during setup, then double-click this file again.
   echo.
   pause
   exit /b 1
@@ -24,7 +27,7 @@ if not exist ".venv\Scripts\python.exe" (
 )
 call ".venv\Scripts\activate.bat"
 
-REM 3. Dependencies (installed once; delete .venv\.installed to force a reinstall)
+REM 3. First-time dependency install
 if not exist ".venv\.installed" (
   echo Installing dependencies. The first run can take a few minutes...
   python -m pip install --upgrade pip
@@ -38,14 +41,31 @@ if not exist ".venv\.installed" (
   echo ok> ".venv\.installed"
 )
 
-REM Self-heal a broken mistralai install (the "cannot import name 'Mistral'" case)
+REM 4. Self-test, with one automatic repair attempt
+echo Checking the installation...
+python selftest.py
+if not errorlevel 1 goto launch
+
+echo.
+echo Some checks failed. Attempting an automatic repair...
+python -m pip install --upgrade -r requirements.txt
 python -c "from mistralai import Mistral" 1>nul 2>nul
 if errorlevel 1 (
-  echo Repairing the mistralai package...
-  python -m pip install --force-reinstall --no-cache-dir "mistralai>=1.0"
+  echo Reinstalling mistralai...
+  python -m pip uninstall -y mistralai
+  python -m pip install --no-cache-dir "mistralai>=1.0"
 )
+echo Re-checking...
+python selftest.py
+if not errorlevel 1 goto launch
 
-REM 4. Load MISTRAL_API_KEY from a local .env file if present
+echo.
+echo Automatic repair could not fix everything. See the messages above.
+pause
+exit /b 1
+
+:launch
+REM 5. Load MISTRAL_API_KEY from .env if present (the app also reads it itself)
 if exist ".env" (
   for /f "usebackq eol=# tokens=1,* delims==" %%A in (".env") do set "%%A=%%B"
 )
@@ -56,8 +76,7 @@ if "%MISTRAL_API_KEY%"=="" (
   echo.
 )
 
-REM 5. Launch
-echo Starting AskMyDocs...
+echo Starting AskMyDocs... it will open at http://localhost:8501
 streamlit run app.py
 
 endlocal

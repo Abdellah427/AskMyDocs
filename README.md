@@ -42,19 +42,15 @@ machine; only the final answer generation calls an external language model.
 
 ### Quick start
 
-The launcher scripts create a virtual environment, install the dependencies, and
-start the app.
+Double-click the launcher (or run it from a terminal). It checks Python, sets up
+the virtual environment, installs the dependencies, runs a self-test, repairs the
+environment if needed, and starts the app.
 
+- Windows: double-click **`launch.bat`**
 - Linux or macOS:
 
   ```bash
-  ./run.sh
-  ```
-
-- Windows:
-
-  ```bat
-  run.bat
+  ./launch.sh
   ```
 
 ### Manual setup
